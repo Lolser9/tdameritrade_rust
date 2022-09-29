@@ -7,7 +7,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use thirtyfour_sync::prelude::*;
 use urlencoding::decode;
 
-/// Creates Token File For Subsequent Use
+/// Creates token file for subsequent use
 ///
 /// Official Documentation: https://developer.tdameritrade.com/authentication/apis/post/token-0
 pub fn create_token_file(
