@@ -13,7 +13,7 @@ Add this to your Cargo.toml
 
 ```toml
 [dependencies]
-tdameritrade_rust = "0.1.1"
+tdameritrade_rust = "0.1.2"
 ```
 
 ## Getting Started
