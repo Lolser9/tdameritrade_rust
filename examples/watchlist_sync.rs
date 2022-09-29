@@ -3,7 +3,7 @@ mod config;
 use serde_json::Value;
 
 fn main() -> Result<(), TDAClientError> {
-    // Create Asynchronous TDAClient
+    // Create Synchronous TDAClient
     let mut client = SyncTDAClient::new(
         config::client_id(),
         config::redirect_uri(),
