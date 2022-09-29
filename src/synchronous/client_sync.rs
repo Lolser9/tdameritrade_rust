@@ -629,7 +629,7 @@ impl SyncTDAClient {
             params.insert("accountId".into(), id.to_string());
         }
 
-        // Parameters
+        // Required Parameters
         params.insert("maxResults".into(), max_results.to_string());
         params.insert("fromEnteredTime".into(), from_entered_time.to_string());
         params.insert("toEnteredTime".into(), to_entered_time.to_string());
@@ -894,6 +894,7 @@ impl SyncTDAClient {
     /// Parameters
     /// - acct_id: Account number
     /// - transaction_type: Only transactions with the specified type will be returned. Valid transaction types are `ALL`, `TRADE`, `BUY_ONLY`, `SELL_ONLY`, `CASH_IN_OR_CASH_OUT`, `CHECKING`, `DIVIDEND`, `INTEREST`, `OTHER`, or `ADVISOR_FEES`
+    /// - symbol: Only transactions with the specified symbol will be returned (Optional)
     /// - start_date: Only transactions after the start date will be returned. The maximum date range is one year. Valid ISO-8601 formats are `yyyy-MM-dd`
     /// - end_date: Only transactions before the end date will be returned. The maximum date range is one year. Valid ISO-8601 formats are `yyyy-MM-dd`
     ///
@@ -902,7 +903,7 @@ impl SyncTDAClient {
         &mut self,
         acct_id: i64,
         transaction_type: &str,
-        symbol: &str,
+        symbol: Option<&str>,
         start_date: &str,
         end_date: &str,
     ) -> Result<String, TDAClientError> {
@@ -915,9 +916,13 @@ impl SyncTDAClient {
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
 
-        // Parameters
+        // Optional Parameter
+        if let Some(s) = symbol {
+            params.insert("symbol".into(), s.into());
+        }
+
+        // Required Parameters
         params.insert("type".into(), transaction_type.into());
-        params.insert("symbol".into(), symbol.into());
         params.insert("startDate".into(), start_date.into());
         params.insert("endDate".into(), end_date.into());
 

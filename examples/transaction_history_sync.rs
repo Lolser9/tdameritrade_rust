@@ -20,7 +20,7 @@ fn main() -> Result<(), TDAClientError> {
     println!("{}", res_json);
 
     // Get Transactions
-    let res = client.get_transactions(acct_id, "ALL", "AAPL", "2021-01-01", "2021-12-31")?;
+    let res = client.get_transactions(acct_id, "ALL", Some("AAPL"), "2021-01-01", "2021-12-31")?;
     let res_json = serde_json::from_str::<Value>(&res)?;
     println!("{}", res_json);
 
