@@ -1,6 +1,6 @@
 # tdameritrade_rust
 
-An unofficial rust library for [TD Ameritrade's API](https://developer.tdameritrade.com/apis). 
+An unofficial rust library for [TD Ameritrade's API](https://developer.tdameritrade.com/apis)
 
 ## Features
 - tdameritrade_rust supports both sync/async
