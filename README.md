@@ -122,7 +122,6 @@ async fn main() -> Result<(), TDAClientError> {
 ## Future Plans
 
 - I plan to make the watchlist and order endpoints easier to use
-- I plan to decode output into custom structs instead of relying on serde_json::Value
 - I plan to support streaming 
 
 ## Disclaimer
