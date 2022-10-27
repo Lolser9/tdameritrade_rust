@@ -14,7 +14,7 @@ fn main() -> Result<(), TDAClientError> {
 
     // Get Quote
     let symbol = "AAPL";
-    let res = client.get_quote("AAPL")?;
+    let res = client.get_quote(symbol)?;
     let res_json = serde_json::from_str::<Quotes>(&res)?;
 
     if let QuoteType::Equity(equity) = &res_json.symbol[symbol] {
