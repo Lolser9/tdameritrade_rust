@@ -140,10 +140,10 @@ impl AsyncTDAClient {
     /// Get an instrument by CUSIP
     ///
     /// Parameters
-    /// - cusip: CUSIP number
+    /// - cusip: CUSIP string
     ///
     /// Official Documentation: https://developer.tdameritrade.com/instruments/apis/get/instruments/%7Bcusip%7D
-    pub async fn get_instrument(&mut self, cusip: i64) -> Result<String, TDAClientError> {
+    pub async fn get_instrument(&mut self, cusip: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
         self.auth.check_token_validity().await;
 

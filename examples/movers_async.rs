@@ -1,5 +1,4 @@
-use serde_json::Value;
-use tdameritrade_rust::{AsyncTDAClient, TDAClientError};
+use tdameritrade_rust::{output::movers::Mover, AsyncTDAClient, TDAClientError};
 mod config;
 
 #[tokio::main]
@@ -13,13 +12,19 @@ async fn main() -> Result<(), TDAClientError> {
 
     // Get Movers
     let res = client.get_movers("$DJI", "up", "percent").await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Mover>>(&res)?;
+
+    for mover in res_json {
+        println!("{}, {}", mover.symbol, mover.change);
+    }
 
     // Alternate Example
     let res = client.get_movers("$COMPX", "down", "value").await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Mover>>(&res)?;
+
+    for mover in res_json {
+        println!("{}, {}", mover.symbol, mover.change);
+    }
 
     Ok(())
 }

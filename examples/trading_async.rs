@@ -1,5 +1,4 @@
-use serde_json::Value;
-use tdameritrade_rust::{AsyncTDAClient, TDAClientError};
+use tdameritrade_rust::{output::trading::Order, AsyncTDAClient, TDAClientError};
 mod config;
 
 #[tokio::main]
@@ -15,23 +14,43 @@ async fn main() -> Result<(), TDAClientError> {
     let acct_id = config::acct_id();
 
     // Get Order
-    let res = client.get_order(acct_id, 9094169803).await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let get_order_id = 0;
+    let res = client.get_order(acct_id, get_order_id).await?;
+    let res_json = serde_json::from_str::<Order>(&res)?;
+
+    if let Order::SimpleOrder(simple_order) = res_json {
+        println!("{}", simple_order.status);
+    } else if let Order::ComplexOrder(complex_order) = res_json {
+        println!("{}", complex_order.status);
+    }
 
     // Get Orders By Path
     let res = client
         .get_orders_by_path(acct_id, 5, "2022-01-01", "2022-12-31", "FILLED")
         .await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Order>>(&res)?;
+
+    for order in res_json {
+        if let Order::SimpleOrder(simple_order) = order {
+            println!("{}", simple_order.status);
+        } else if let Order::ComplexOrder(complex_order) = order {
+            println!("{}", complex_order.status);
+        }
+    }
 
     // Get Orders By Query
     let res = client
-        .get_orders_by_query(None, 5, "2022-01-01", "2022-12-31", "FILLED")
+        .get_orders_by_query(None, 5, "2022-01-01", "2022-12-31", "CANCELED")
         .await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Order>>(&res)?;
+
+    for order in res_json {
+        if let Order::SimpleOrder(simple_order) = order {
+            println!("{}", simple_order.status);
+        } else if let Order::ComplexOrder(complex_order) = order {
+            println!("{}", complex_order.status);
+        }
+    }
 
     // Place Order
     place_order(&mut client, acct_id).await?; // Limit Order For 1 Share Of AAPL At $1000
@@ -47,13 +66,21 @@ async fn main() -> Result<(), TDAClientError> {
     // Get Saved Order
     let saved_order_id = 0;
     let res = client.get_saved_order(acct_id, saved_order_id).await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Order>(&res)?;
+
+    if let Order::SimpleSavedOrder(simple_saved_order) = res_json {
+        println!("{}", simple_saved_order.session);
+    }
 
     // Get Saved Order By Path
     let res = client.get_saved_orders_by_path(acct_id).await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Order>>(&res)?;
+
+    for order in res_json {
+        if let Order::SimpleSavedOrder(simple_saved_order) = order {
+            println!("{}", simple_saved_order.session);
+        }
+    }
 
     // Create Saved Order
     create_saved_order(&mut client, acct_id).await?; // Create Saved Limit Order For 1 Share Of AAPL At $1000

@@ -1,5 +1,4 @@
-use serde_json::Value;
-use tdameritrade_rust::{SyncTDAClient, TDAClientError};
+use tdameritrade_rust::{output::movers::Mover, SyncTDAClient, TDAClientError};
 mod config;
 
 fn main() -> Result<(), TDAClientError> {
@@ -12,13 +11,19 @@ fn main() -> Result<(), TDAClientError> {
 
     // Get Movers
     let res = client.get_movers("$DJI", "up", "percent")?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Mover>>(&res)?;
+
+    for mover in res_json {
+        println!("{}, {}", mover.symbol, mover.change);
+    }
 
     // Alternate Example
     let res = client.get_movers("$COMPX", "down", "value")?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Mover>>(&res)?;
+
+    for mover in res_json {
+        println!("{}, {}", mover.symbol, mover.change);
+    }
 
     Ok(())
 }

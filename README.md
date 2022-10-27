@@ -49,7 +49,7 @@ fn main() -> Result<(), TDAClientError> {
     let mut client = SyncTDAClient::new(
         "client_id@AMER.OAUTHAP".into(), // Client Id (Consumer Key)
         "redirect_uri".into(), // Redirect URI (Callback URL)
-        "token_file_path".into(), // Where To Put Token File After Completion 
+        "token_file_path".into(), // Token File Location
     );
 
     // Get Quote
@@ -79,7 +79,7 @@ async fn main() -> Result<(), TDAClientError> {
     let mut client = AsyncTDAClient::new(
         "client_id@AMER.OAUTHAP".into(), // Client Id (Consumer Key)
         "redirect_uri".into(), // Redirect URI (Callback URL)
-        "token_file_path".into(), // Where To Put Token File After Completion 
+        "token_file_path".into(), // Token File Location
     );
 
     // Get Quote
