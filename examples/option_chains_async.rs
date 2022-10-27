@@ -16,7 +16,7 @@ async fn main() -> Result<(), TDAClientError> {
     let option_params = OptionChainParams::default()
         .symbol("AAPL")
         .contract_type("CALL")
-        .strategy("ANALYTICAL")
+        .strategy("SINGLE")
         .range("ITM")
         .expiration_month("OCT")
         .option_type("S")
