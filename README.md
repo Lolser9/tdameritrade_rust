@@ -23,7 +23,7 @@ tdameritrade_rust = "0.1.3"
 - Click on your app and copy the consumer key
 - Click on the details section of your app and copy the callback url
 - Download [chromedriver](https://chromedriver.chromium.org/downloads)
-- Copy code below, replace_fields, run, and login when prompted to receive a token file from TD Ameritrade
+- Copy code below, replace fields, run code, and login when prompted to receive a token file from TD Ameritrade
 ```
 use tdameritrade_rust::init;
 
