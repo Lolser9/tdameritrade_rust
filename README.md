@@ -13,7 +13,7 @@ Add this to your Cargo.toml
 
 ```toml
 [dependencies]
-tdameritrade_rust = "0.1.2"
+tdameritrade_rust = "0.1.3"
 ```
 
 ## Getting Started
@@ -41,27 +41,38 @@ fn main() {
 ## Synchronous
 - After creating the token file, create a TD Ameritrade Client to access the API endpoints. Here's an example with the synchronous client
 ```
-use serde_json::Value;
-use tdameritrade_rust::{SyncTDAClient, TDAClientError};
+use tdameritrade_rust::{
+    output::quotes::{QuoteType, Quotes},
+    SyncTDAClient, TDAClientError,
+};
 
 fn main() -> Result<(), TDAClientError> {
     // Create Synchronous TDAClient
     let mut client = SyncTDAClient::new(
         "client_id@AMER.OAUTHAP".into(), // Client Id (Consumer Key)
         "redirect_uri".into(), // Redirect URI (Callback URL)
-        "token_file_path".into(), // Token File Path 
+        "token_file_path".into(), // Token File Location
     );
 
     // Get Quote
-    let res = client.get_quote("AAPL")?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let symbol = "AAPL";
+    let res = client.get_quote(symbol)?;
+    let res_json = serde_json::from_str::<Quotes>(&res)?;
+
+    if let QuoteType::Equity(equity) = &res_json.symbol[symbol] {
+        println!("{}", equity.close_price);
+    }
 
     // Get Quotes
     let symbols = vec!["AAPL", "AMZN", "AMD", "NVDA"];
     let res = client.get_quotes(&symbols)?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Quotes>(&res)?;
+
+    for symbol in symbols.into_iter() {
+        if let QuoteType::Equity(equity) = &res_json.symbol[symbol] {
+            println!("{}", equity.close_price)
+        }
+    }
 
     Ok(())
 }
@@ -70,8 +81,10 @@ fn main() -> Result<(), TDAClientError> {
 ## Asynchronous
 - After creating the token file, create a TD Ameritrade Client to access the API endpoints. Here's an example with the asynchronous client
 ```
-use serde_json::Value;
-use tdameritrade_rust::{AsyncTDAClient, TDAClientError};
+use tdameritrade_rust::{
+    output::quotes::{QuoteType, Quotes},
+    AsyncTDAClient, TDAClientError,
+};
 
 #[tokio::main]
 async fn main() -> Result<(), TDAClientError> {
@@ -79,19 +92,28 @@ async fn main() -> Result<(), TDAClientError> {
     let mut client = AsyncTDAClient::new(
         "client_id@AMER.OAUTHAP".into(), // Client Id (Consumer Key)
         "redirect_uri".into(), // Redirect URI (Callback URL)
-        "token_file_path".into(), // Token File Path
+        "token_file_path".into(), // Token File Location
     );
 
     // Get Quote
-    let res = client.get_quote("AAPL").await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let symbol = "AAPL";
+    let res = client.get_quote(symbol).await?;
+    let res_json = serde_json::from_str::<Quotes>(&res)?;
+
+    if let QuoteType::Equity(equity) = &res_json.symbol[symbol] {
+        println!("{}", equity.close_price);
+    }
 
     // Get Quotes
     let symbols = vec!["AAPL", "AMZN", "AMD", "NVDA"];
     let res = client.get_quotes(&symbols).await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Quotes>(&res)?;
+
+    for symbol in symbols.into_iter() {
+        if let QuoteType::Equity(equity) = &res_json.symbol[symbol] {
+            println!("{}", equity.close_price)
+        }
+    }
 
     Ok(())
 }
@@ -100,7 +122,6 @@ async fn main() -> Result<(), TDAClientError> {
 ## Future Plans
 
 - I plan to make the watchlist and order endpoints easier to use
-- I plan to decode output into custom structs instead of relying on serde_json::Value
 - I plan to support streaming 
 
 ## Disclaimer

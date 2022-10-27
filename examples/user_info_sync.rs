@@ -1,5 +1,7 @@
-use serde_json::Value;
-use tdameritrade_rust::{SyncTDAClient, TDAClientError};
+use tdameritrade_rust::{
+    output::user_info::{StreamerSubscriptionKeys, UserPrincipals},
+    SyncTDAClient, TDAClientError,
+};
 mod config;
 
 fn main() -> Result<(), TDAClientError> {
@@ -16,8 +18,11 @@ fn main() -> Result<(), TDAClientError> {
     // Get Streamer Subscription Keys
     let accounts = vec![acct_id];
     let res = client.get_streamer_subscription_keys(&accounts)?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<StreamerSubscriptionKeys>(&res)?;
+
+    for key in res_json.keys {
+        println!("{}", key.key);
+    }
 
     // Get User Principles
     let fields = vec![
@@ -27,13 +32,13 @@ fn main() -> Result<(), TDAClientError> {
         "surrogateIds",
     ];
     let res = client.get_user_principals(Some(&fields))?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<UserPrincipals>(&res)?;
+    println!("{:?}", res_json.streamer_subscription_keys.unwrap().keys);
 
     // Alternate Example
     let res = client.get_user_principals(None)?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<UserPrincipals>(&res)?;
+    println!("{}", res_json.user_id);
 
     Ok(())
 }

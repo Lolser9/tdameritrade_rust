@@ -13,6 +13,9 @@ pub use synchronous::client_sync::SyncTDAClient;
 // Token
 mod token;
 
+// Output Structs
+pub mod output;
+
 // Error Handling
 mod error;
 pub use error::TDAClientError;

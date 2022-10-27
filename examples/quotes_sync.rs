@@ -1,5 +1,7 @@
-use serde_json::Value;
-use tdameritrade_rust::{SyncTDAClient, TDAClientError};
+use tdameritrade_rust::{
+    output::quotes::{QuoteType, Quotes},
+    SyncTDAClient, TDAClientError,
+};
 mod config;
 
 fn main() -> Result<(), TDAClientError> {
@@ -11,15 +13,24 @@ fn main() -> Result<(), TDAClientError> {
     );
 
     // Get Quote
-    let res = client.get_quote("AAPL")?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let symbol = "AAPL";
+    let res = client.get_quote(symbol)?;
+    let res_json = serde_json::from_str::<Quotes>(&res)?;
+
+    if let QuoteType::Equity(equity) = &res_json.symbol[symbol] {
+        println!("{}", equity.close_price);
+    }
 
     // Get Quotes
     let symbols = vec!["AAPL", "AMZN", "AMD", "NVDA"];
     let res = client.get_quotes(&symbols)?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Quotes>(&res)?;
+
+    for symbol in symbols.into_iter() {
+        if let QuoteType::Equity(equity) = &res_json.symbol[symbol] {
+            println!("{}", equity.close_price)
+        }
+    }
 
     Ok(())
 }

@@ -1,6 +1,7 @@
 use chrono::{Duration, Utc};
-use serde_json::Value;
-use tdameritrade_rust::{PriceHistoryParams, SyncTDAClient, TDAClientError};
+use tdameritrade_rust::{
+    output::price_history::PriceHistory, PriceHistoryParams, SyncTDAClient, TDAClientError,
+};
 mod config;
 
 fn main() -> Result<(), TDAClientError> {
@@ -22,11 +23,14 @@ fn main() -> Result<(), TDAClientError> {
         .build()
         .expect("Failed To Build");
 
+    // Returns 30 Minute Candles Over A Period Of 10 Trading Days Without Extended Hours Data
     let res = client.get_price_history(&price_history_params)?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
+    let res_json = serde_json::from_str::<PriceHistory>(&res)?;
 
-    // Returns 30 minute candles over a period of 10 Trading days without extended hours data
-    println!("{}", res_json);
+    // Print Close Value In Every Candle
+    for candle in res_json.candles {
+        println!("{}", candle.close)
+    }
 
     // Get Price History With Start And End Time
     let current_utc_time = Utc::now();
@@ -43,11 +47,14 @@ fn main() -> Result<(), TDAClientError> {
         .build()
         .expect("Failed To Build");
 
+    // Returns 30 Minute Candles Over A Period Of 30 Days Without Extended Hours Data
     let res = client.get_price_history(&price_history_params)?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
+    let res_json = serde_json::from_str::<PriceHistory>(&res)?;
 
-    // Returns 30 minute candles over a period of 30 days without extended hours data
-    println!("{}", res_json);
+    // Print Close Value In Every Candle
+    for candle in res_json.candles {
+        println!("{}", candle.close)
+    }
 
     Ok(())
 }

@@ -1,5 +1,4 @@
-use serde_json::Value;
-use tdameritrade_rust::{AsyncTDAClient, TDAClientError};
+use tdameritrade_rust::{output::watchlist::Watchlist, AsyncTDAClient, TDAClientError};
 mod config;
 
 #[tokio::main]
@@ -16,19 +15,25 @@ async fn main() -> Result<(), TDAClientError> {
 
     // Get Watchlists For Multiple Accounts
     let res = client.get_watchlists_for_multiple_accounts().await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Watchlist>>(&res)?;
+
+    for watchlist in res_json {
+        println!("{}", watchlist.watchlist_id);
+    }
 
     // Get Watchlists For Single Account
     let res = client.get_watchlists_for_single_account(acct_id).await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Vec<Watchlist>>(&res)?;
+
+    for watchlist in res_json {
+        println!("{}", watchlist.watchlist_id);
+    }
 
     // Get Watchlist
     let get_watchlist_id = 0;
     let res = client.get_watchlist(acct_id, get_watchlist_id).await?;
-    let res_json = serde_json::from_str::<Value>(&res)?;
-    println!("{}", res_json);
+    let res_json = serde_json::from_str::<Watchlist>(&res)?;
+    println!("{}", res_json.watchlist_id);
 
     // Create Watchlist
     create_watchlist(&mut client, acct_id).await?; // Creates Watchlist With Symbols AAPL and AMZN
