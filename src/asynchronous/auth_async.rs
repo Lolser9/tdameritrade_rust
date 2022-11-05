@@ -1,4 +1,5 @@
 use crate::token::{read_token_file, NewAccessToken, Token};
+use crate::TDAClientError;
 use reqwest::Client;
 use std::collections::HashMap;
 use std::fs;
@@ -17,9 +18,13 @@ pub struct AsyncAuth {
 
 impl AsyncAuth {
     // Create New Auth
-    pub fn new(client_id: String, redirect_uri: String, token_path: String) -> Self {
+    pub fn new(
+        client_id: String,
+        redirect_uri: String,
+        token_path: String,
+    ) -> Result<Self, TDAClientError> {
         // Read Token File
-        let token: Token = read_token_file(&token_path);
+        let token: Token = read_token_file(&token_path)?;
 
         // Create New Auth
         let mut auth: AsyncAuth = AsyncAuth::default();
@@ -34,7 +39,7 @@ impl AsyncAuth {
         auth.refresh_token_expire_time = token.refresh_token_expires_in;
 
         // Return Auth
-        auth
+        Ok(auth)
     }
 
     // Get Access Token
@@ -43,7 +48,7 @@ impl AsyncAuth {
     }
 
     // Check Token Validity
-    pub async fn check_token_validity(&mut self) {
+    pub async fn check_token_validity(&mut self) -> Result<(), TDAClientError> {
         // Get Current Time
         let now: SystemTime = SystemTime::now();
         let epoch_time: u64 = now
@@ -53,17 +58,19 @@ impl AsyncAuth {
 
         // Check If Refresh Token Is Valid
         if epoch_time > self.refresh_token_expire_time {
-            self.request_new_token("refresh_token").await;
+            self.request_new_token("refresh_token").await?;
         }
 
         // Check If Access Token Is Valid
         if epoch_time > self.access_token_expire_time {
-            self.request_new_token("access_token").await;
+            self.request_new_token("access_token").await?;
         }
+
+        Ok(())
     }
 
     // Request New Token
-    pub async fn request_new_token(&mut self, token_type: &str) {
+    pub async fn request_new_token(&mut self, token_type: &str) -> Result<(), TDAClientError> {
         // Create Client
         let reqwest_client: Client = Client::new();
 
@@ -85,12 +92,7 @@ impl AsyncAuth {
         let url: String = "https://api.tdameritrade.com/v1/oauth2/token".into();
 
         // Request New Token
-        let res = reqwest_client
-            .post(url)
-            .form(&params)
-            .send()
-            .await
-            .expect("Post Request Failed");
+        let res = reqwest_client.post(url).form(&params).send().await?;
 
         // Get Response Text
         let res_text: String = res.text().await.expect("Unable To Get Post Text");
@@ -111,18 +113,17 @@ impl AsyncAuth {
                     self.access_token_expire_time = epoch_time + 1500; // 25 Minutes Until Access Token Refresh
 
                     // Read Token File
-                    let mut token: Token = read_token_file(&self.token_path);
+                    let mut token: Token = read_token_file(&self.token_path)?;
 
                     // Replace Access Token
                     token.replace_access_token(res_json.access_token);
 
                     // Write To File
-                    fs::write(self.token_path.clone(), token.to_string())
-                        .expect("Unable to write to file");
+                    fs::write(self.token_path.clone(), token.to_string())?
                 }
 
                 // Too Many Calls To TDAmeritrade Servers
-                Err(_) => return,
+                _ => (),
             }
         }
 
@@ -144,7 +145,7 @@ impl AsyncAuth {
                     self.refresh_token_expire_time = epoch_time + 6480000; // Refresh Token Expires After 75 Days
 
                     // Read Token File
-                    let mut token: Token = read_token_file(&self.token_path);
+                    let mut token: Token = read_token_file(&self.token_path)?;
 
                     // Replace Tokens
                     token.replace_access_token(res_json.access_token);
@@ -154,13 +155,14 @@ impl AsyncAuth {
                     token.replace_refresh_token_expire_time(epoch_time + 6480000); // Refresh Token Expires After 75 Days
 
                     // Write To File
-                    fs::write(self.token_path.clone(), token.to_string())
-                        .expect("Unable to write to file");
+                    fs::write(self.token_path.clone(), token.to_string())?
                 }
 
                 // Too Many Calls To TDAmeritrade Servers
-                Err(_) => return,
+                _ => (),
             }
         }
+
+        Ok(())
     }
 }

@@ -12,18 +12,22 @@ pub struct AsyncTDAClient {
 
 impl AsyncTDAClient {
     /// Create New Asynchronous TDAClient
-    pub fn new(client_id: String, redirect_uri: String, token_path: String) -> AsyncTDAClient {
+    pub fn new(
+        client_id: String,
+        redirect_uri: String,
+        token_path: String,
+    ) -> Result<AsyncTDAClient, TDAClientError> {
         // Create Auth Client
-        let auth: AsyncAuth = AsyncAuth::new(client_id, redirect_uri, token_path);
+        let auth: AsyncAuth = AsyncAuth::new(client_id, redirect_uri, token_path)?;
 
         // Create Reqwest Client
         let reqwest_client: Client = Client::new();
 
         // Create New AsyncTDAClient
-        AsyncTDAClient {
+        Ok(AsyncTDAClient {
             reqwest_client,
             auth,
-        }
+        })
     }
 
     //// Accounts ////
@@ -41,7 +45,7 @@ impl AsyncTDAClient {
         fields: Option<&Vec<&str>>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -75,7 +79,7 @@ impl AsyncTDAClient {
         fields: Option<&Vec<&str>>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -118,7 +122,7 @@ impl AsyncTDAClient {
         projection: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -145,7 +149,7 @@ impl AsyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/instruments/apis/get/instruments/%7Bcusip%7D
     pub async fn get_instrument(&mut self, cusip: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -175,7 +179,7 @@ impl AsyncTDAClient {
         date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -210,7 +214,7 @@ impl AsyncTDAClient {
         date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -245,7 +249,7 @@ impl AsyncTDAClient {
         change: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -293,7 +297,7 @@ impl AsyncTDAClient {
         option_params: &OptionChain,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -376,7 +380,7 @@ impl AsyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/user-principal/apis/get/accounts/%7BaccountId%7D/preferences-0
     pub async fn get_preferences(&mut self, acct_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -404,7 +408,7 @@ impl AsyncTDAClient {
         preference_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -440,7 +444,7 @@ impl AsyncTDAClient {
         history_params: &PriceHistory,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -490,7 +494,7 @@ impl AsyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/quotes/apis/get/marketdata/%7Bsymbol%7D/quotes
     pub async fn get_quote(&mut self, symbol: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -513,7 +517,7 @@ impl AsyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/quotes/apis/get/marketdata/quotes
     pub async fn get_quotes(&mut self, symbols: &Vec<&str>) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -549,7 +553,7 @@ impl AsyncTDAClient {
         order_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -583,7 +587,7 @@ impl AsyncTDAClient {
         status: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -623,7 +627,7 @@ impl AsyncTDAClient {
         status: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -664,7 +668,7 @@ impl AsyncTDAClient {
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -696,7 +700,7 @@ impl AsyncTDAClient {
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -724,7 +728,7 @@ impl AsyncTDAClient {
         order_id: i64,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -749,7 +753,7 @@ impl AsyncTDAClient {
         order_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -775,7 +779,7 @@ impl AsyncTDAClient {
         acct_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -805,7 +809,7 @@ impl AsyncTDAClient {
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -837,7 +841,7 @@ impl AsyncTDAClient {
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -865,7 +869,7 @@ impl AsyncTDAClient {
         order_id: i64,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -892,7 +896,7 @@ impl AsyncTDAClient {
         transaction_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -926,7 +930,7 @@ impl AsyncTDAClient {
         end_date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -964,7 +968,7 @@ impl AsyncTDAClient {
         acct_ids: &Vec<i64>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -996,7 +1000,7 @@ impl AsyncTDAClient {
         fields: Option<&Vec<&str>>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1034,7 +1038,7 @@ impl AsyncTDAClient {
         watchlist_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1060,7 +1064,7 @@ impl AsyncTDAClient {
         acct_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1080,7 +1084,7 @@ impl AsyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/get/accounts/watchlists-0
     pub async fn get_watchlists_for_multiple_accounts(&mut self) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1108,7 +1112,7 @@ impl AsyncTDAClient {
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1138,7 +1142,7 @@ impl AsyncTDAClient {
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1168,7 +1172,7 @@ impl AsyncTDAClient {
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1196,7 +1200,7 @@ impl AsyncTDAClient {
         watchlist_id: i64,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity().await;
+        self.auth.check_token_validity().await?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();

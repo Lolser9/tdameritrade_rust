@@ -8,7 +8,7 @@ async fn main() -> Result<(), TDAClientError> {
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
-    );
+    )?;
 
     // Get Movers
     let res = client.get_movers("$DJI", "up", "percent").await?;

@@ -10,7 +10,7 @@ async fn main() -> Result<(), TDAClientError> {
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
-    );
+    )?;
 
     // Get Option Chain
     let option_params = OptionChainParams::default()

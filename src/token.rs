@@ -1,3 +1,4 @@
+use crate::TDAClientError;
 use serde::{Deserialize, Serialize};
 use std::fs;
 
@@ -42,14 +43,13 @@ impl Token {
 }
 
 // Read Token File
-pub fn read_token_file(token_file_path: &String) -> Token {
+pub fn read_token_file(token_file_path: &String) -> Result<Token, TDAClientError> {
     // Open File
-    let file_contents: String = fs::read_to_string(token_file_path).expect("Unable To Read File");
+    let file_contents: String = fs::read_to_string(token_file_path)?;
 
     // Convert Token File To Token
-    let token: Token =
-        serde_json::from_str(file_contents.as_str()).expect("Unable To Convert File To Token");
+    let token: Token = serde_json::from_str(file_contents.as_str())?;
 
     // Return Token
-    token
+    Ok(token)
 }
