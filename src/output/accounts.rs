@@ -51,7 +51,7 @@ pub struct OrderStrategy {
     pub remaining_quantity: f64,
     pub requested_destination: String,
     pub destination_link_name: String,
-    pub price: f64,
+    pub price: Option<f64>,
     pub order_leg_collection: Vec<OrderLegCollection>,
     pub order_strategy_type: String,
     pub order_id: i64,
