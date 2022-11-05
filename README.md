@@ -2,7 +2,7 @@
 
 An unofficial rust library for [TD Ameritrade's API](https://developer.tdameritrade.com/apis)
 
-## New in version 1.4
+## New in version 0.1.4
 - Created OrderBuilder to construct orders for TD Ameritrade easier. 
 - Created equity order templates with OrderBuilder
 - Updated trading_async.rs and trading_sync.rs under examples to showcase OrderBuilder
