@@ -7,6 +7,7 @@ An unofficial rust library for [TD Ameritrade's API](https://developer.tdameritr
 - Created equity order templates with OrderBuilder
 - Updated trading_async.rs and trading_sync.rs under examples to showcase OrderBuilder
 - Integrated creating new client with TDAClient Error
+- Updated account output struct
 
 My OrderBuilder was heavily inspired by Alex Golec's OrderBuilder from [tda api](https://github.com/alexgolec/tda-api). His [documentation](https://tda-api.readthedocs.io/en/latest/order-builder.html) of OrderBuilder is an amazing resource, and should work with the OrderBuilder from this library.
 
