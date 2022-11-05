@@ -8,7 +8,7 @@ async fn main() -> Result<(), TDAClientError> {
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
-    );
+    )?;
 
     // Get Hours For Multiple Markets
     let markets = vec!["EQUITY", "OPTION", "FUTURE", "BOND", "FOREX"];

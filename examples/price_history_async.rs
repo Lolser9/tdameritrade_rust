@@ -11,7 +11,7 @@ async fn main() -> Result<(), TDAClientError> {
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
-    );
+    )?;
 
     // Get Price History With Period
     let price_history_params = PriceHistoryParams::default()

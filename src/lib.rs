@@ -1,6 +1,7 @@
 // Builders
 mod builders;
-pub use builders::{OptionChainParams, PriceHistoryParams};
+pub mod order_templates;
+pub use builders::{OptionChainParams, OrderBuilder, PriceHistoryParams};
 
 // Asynchronous TDAClient
 mod asynchronous;

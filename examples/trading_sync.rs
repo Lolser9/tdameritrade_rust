@@ -1,4 +1,6 @@
-use tdameritrade_rust::{output::trading::Order, SyncTDAClient, TDAClientError};
+use tdameritrade_rust::{
+    order_templates::equity_buy_limit, output::trading::Order, SyncTDAClient, TDAClientError,
+};
 mod config;
 
 fn main() -> Result<(), TDAClientError> {
@@ -7,7 +9,7 @@ fn main() -> Result<(), TDAClientError> {
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
-    );
+    )?;
 
     // Get Account Id
     let acct_id = config::acct_id();
@@ -92,25 +94,30 @@ fn main() -> Result<(), TDAClientError> {
 }
 
 fn place_order(client: &mut SyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
-    let order_spec = r#"{
-        "orderType": "LIMIT",
-        "session": "SEAMLESS",
-        "duration": "GOOD_TILL_CANCEL",
-        "price": 1000.00,
-        "orderStrategyType": "SINGLE",
-        "orderLegCollection": [
-          {
-            "instruction": "BUY",
-            "quantity": 1,
-            "instrument": {
-              "symbol": "AAPL",
-              "assetType": "EQUITY"
-            }
-          }
-        ]
-      }"#;
+    let order_spec = equity_buy_limit("AAPL", 1.0, 1000.0).build()?;
 
-    client.place_order(acct_id, order_spec)?;
+    /*
+      Translates to this
+    {
+      "session": "NORMAL",
+      "duration": "DAY",
+      "orderType": "LIMIT",
+      "price": 1000.0,
+      "orderLegCollection": [
+        {
+          "instruction": "BUY",
+          "instrument": {
+            "assetType": "EQUITY",
+            "symbol": "AAPL"
+          },
+          "quantity": 1.0
+        }
+      ],
+      "orderStrategyType": "SINGLE"
+    }
+    */
+
+    client.place_order(acct_id, &order_spec)?;
 
     Ok(())
 }

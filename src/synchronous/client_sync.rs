@@ -12,18 +12,22 @@ pub struct SyncTDAClient {
 
 impl SyncTDAClient {
     /// Create New Synchronous TDAClient
-    pub fn new(client_id: String, redirect_uri: String, token_path: String) -> SyncTDAClient {
+    pub fn new(
+        client_id: String,
+        redirect_uri: String,
+        token_path: String,
+    ) -> Result<SyncTDAClient, TDAClientError> {
         // Create Auth Client
-        let auth: SyncAuth = SyncAuth::new(client_id, redirect_uri, token_path);
+        let auth: SyncAuth = SyncAuth::new(client_id, redirect_uri, token_path)?;
 
         // Create Reqwest Client
         let reqwest_client: Client = Client::new();
 
         // Create New SyncTDAClient
-        SyncTDAClient {
+        Ok(SyncTDAClient {
             reqwest_client,
             auth,
-        }
+        })
     }
 
     //// Accounts ////
@@ -41,7 +45,7 @@ impl SyncTDAClient {
         fields: Option<&Vec<&str>>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -72,7 +76,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts-0
     pub fn get_accounts(&mut self, fields: Option<&Vec<&str>>) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -115,7 +119,7 @@ impl SyncTDAClient {
         projection: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -142,7 +146,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/instruments/apis/get/instruments/%7Bcusip%7D
     pub fn get_instrument(&mut self, cusip: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -172,7 +176,7 @@ impl SyncTDAClient {
         date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -207,7 +211,7 @@ impl SyncTDAClient {
         date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -242,7 +246,7 @@ impl SyncTDAClient {
         change: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -290,7 +294,7 @@ impl SyncTDAClient {
         option_params: &OptionChain,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -373,7 +377,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/user-principal/apis/get/accounts/%7BaccountId%7D/preferences-0
     pub fn get_preferences(&mut self, acct_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -401,7 +405,7 @@ impl SyncTDAClient {
         preference_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -437,7 +441,7 @@ impl SyncTDAClient {
         history_params: &PriceHistory,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -487,7 +491,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/quotes/apis/get/marketdata/%7Bsymbol%7D/quotes
     pub fn get_quote(&mut self, symbol: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -510,7 +514,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/quotes/apis/get/marketdata/quotes
     pub fn get_quotes(&mut self, symbols: &Vec<&str>) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -542,7 +546,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts/%7BaccountId%7D/orders/%7BorderId%7D-0
     pub fn get_order(&mut self, acct_id: i64, order_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -576,7 +580,7 @@ impl SyncTDAClient {
         status: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -616,7 +620,7 @@ impl SyncTDAClient {
         status: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -653,7 +657,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/post/accounts/%7BaccountId%7D/orders-0
     pub fn place_order(&mut self, acct_id: i64, order_spec: &str) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -685,7 +689,7 @@ impl SyncTDAClient {
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -709,7 +713,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/delete/accounts/%7BaccountId%7D/orders/%7BorderId%7D-0
     pub fn cancel_order(&mut self, acct_id: i64, order_id: i64) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -734,7 +738,7 @@ impl SyncTDAClient {
         order_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -757,7 +761,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts/%7BaccountId%7D/savedorders-0
     pub fn get_saved_orders_by_path(&mut self, acct_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -787,7 +791,7 @@ impl SyncTDAClient {
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -819,7 +823,7 @@ impl SyncTDAClient {
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -847,7 +851,7 @@ impl SyncTDAClient {
         order_id: i64,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -874,7 +878,7 @@ impl SyncTDAClient {
         transaction_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -908,7 +912,7 @@ impl SyncTDAClient {
         end_date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -946,7 +950,7 @@ impl SyncTDAClient {
         acct_ids: &Vec<i64>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -978,7 +982,7 @@ impl SyncTDAClient {
         fields: Option<&Vec<&str>>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1016,7 +1020,7 @@ impl SyncTDAClient {
         watchlist_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1042,7 +1046,7 @@ impl SyncTDAClient {
         acct_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1062,7 +1066,7 @@ impl SyncTDAClient {
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/get/accounts/watchlists-0
     pub fn get_watchlists_for_multiple_accounts(&mut self) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1090,7 +1094,7 @@ impl SyncTDAClient {
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1120,7 +1124,7 @@ impl SyncTDAClient {
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1150,7 +1154,7 @@ impl SyncTDAClient {
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
@@ -1178,7 +1182,7 @@ impl SyncTDAClient {
         watchlist_id: i64,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity();
+        self.auth.check_token_validity()?;
 
         // Get Access Token
         let access_token: String = self.auth.get_access_token();
