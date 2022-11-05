@@ -13,7 +13,7 @@ Add this to your Cargo.toml
 
 ```toml
 [dependencies]
-tdameritrade_rust = "0.1.3"
+tdameritrade_rust = "0.1.4"
 ```
 
 ## Getting Started
@@ -121,7 +121,7 @@ async fn main() -> Result<(), TDAClientError> {
 
 ## Future Plans
 
-- I plan to make the watchlist and order endpoints easier to use
+- I plan to make the watchlist endpoint easier to use
 - I plan to support streaming 
 
 ## Disclaimer
