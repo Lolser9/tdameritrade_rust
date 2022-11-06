@@ -61,7 +61,7 @@ fn main() -> Result<(), TDAClientError> {
         "client_id@AMER.OAUTHAP".into(), // Client Id (Consumer Key)
         "redirect_uri".into(), // Redirect URI (Callback URL)
         "token_file_path".into(), // Token File Location
-    );
+    )?;
 
     // Get Quote
     let symbol = "AAPL";
@@ -102,7 +102,7 @@ async fn main() -> Result<(), TDAClientError> {
         "client_id@AMER.OAUTHAP".into(), // Client Id (Consumer Key)
         "redirect_uri".into(), // Redirect URI (Callback URL)
         "token_file_path".into(), // Token File Location
-    );
+    )?;
 
     // Get Quote
     let symbol = "AAPL";
