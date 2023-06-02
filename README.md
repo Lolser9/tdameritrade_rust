@@ -2,7 +2,7 @@
 
 An unofficial rust library for [TD Ameritrade's API](https://developer.tdameritrade.com/apis)
 
-## New in version 0.1.4.1
+## New in version 0.1.5
 - Added interior mutability
 
 ## New in version 0.1.4
@@ -25,7 +25,7 @@ Add this to your Cargo.toml
 
 ```toml
 [dependencies]
-tdameritrade_rust = "0.1.4.1"
+tdameritrade_rust = "0.1.5"
 ```
 
 ## Getting Started
