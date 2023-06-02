@@ -6,7 +6,7 @@ mod config;
 
 fn main() -> Result<(), TDAClientError> {
     // Create Synchronous TDAClient
-    let mut client = SyncTDAClient::new(
+    let client = SyncTDAClient::new(
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),

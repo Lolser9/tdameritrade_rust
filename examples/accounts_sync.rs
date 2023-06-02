@@ -3,7 +3,7 @@ mod config;
 
 fn main() -> Result<(), TDAClientError> {
     // Create Synchronous TDAClient
-    let mut client = SyncTDAClient::new(
+    let client = SyncTDAClient::new(
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
@@ -15,6 +15,7 @@ fn main() -> Result<(), TDAClientError> {
     // Get Account
     let fields = vec!["orders", "positions"];
     let res = client.get_account(acct_id, Some(&fields))?;
+    println!("{}", res);
     let res_json = serde_json::from_str::<Account>(&res)?;
     println!("{:?}", res_json);
 

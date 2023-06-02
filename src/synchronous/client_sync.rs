@@ -4,10 +4,11 @@ use crate::synchronous::{auth_sync::SyncAuth, requests_sync};
 use itertools::Itertools;
 use reqwest::blocking::Client;
 use std::collections::HashMap;
+use std::sync::RwLock;
 
 pub struct SyncTDAClient {
     reqwest_client: Client,
-    auth: SyncAuth,
+    auth: RwLock<SyncAuth>,
 }
 
 impl SyncTDAClient {
@@ -26,7 +27,7 @@ impl SyncTDAClient {
         // Create New SyncTDAClient
         Ok(SyncTDAClient {
             reqwest_client,
-            auth,
+            auth: RwLock::new(auth),
         })
     }
 
@@ -40,15 +41,17 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts/%7BaccountId%7D-0
     pub fn get_account(
-        &mut self,
+        &self,
         acct_id: i64,
         fields: Option<&Vec<&str>>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -74,12 +77,14 @@ impl SyncTDAClient {
     /// - fields: Balances displayed by default. Valid fields are `positions` or `orders` (Optional)
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts-0
-    pub fn get_accounts(&mut self, fields: Option<&Vec<&str>>) -> Result<String, TDAClientError> {
+    pub fn get_accounts(&self, fields: Option<&Vec<&str>>) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -114,15 +119,17 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/instruments/apis/get/instruments
     pub fn search_instruments(
-        &mut self,
+        &self,
         symbol: &str,
         projection: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -144,12 +151,14 @@ impl SyncTDAClient {
     /// - cusip: CUSIP string
     ///
     /// Official Documentation: https://developer.tdameritrade.com/instruments/apis/get/instruments/%7Bcusip%7D
-    pub fn get_instrument(&mut self, cusip: &str) -> Result<String, TDAClientError> {
+    pub fn get_instrument(&self, cusip: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -171,15 +180,17 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/market-hours/apis/get/marketdata/hours
     pub fn get_hours_for_multiple_markets(
-        &mut self,
+        &self,
         markets: &Vec<&str>,
         date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -206,15 +217,17 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/market-hours/apis/get/marketdata/%7Bmarket%7D/hours
     pub fn get_hours_for_single_market(
-        &mut self,
+        &self,
         market: &str,
         date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -240,16 +253,18 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/movers/apis/get/marketdata/%7Bindex%7D/movers
     pub fn get_movers(
-        &mut self,
+        &self,
         index: &str,
         direction: &str,
         change: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -289,15 +304,14 @@ impl SyncTDAClient {
     ///     - option_type: Type of contracts to return. Valid option types are `S` (Standard contracts), `NS` (Non-standard contracts), or `ALL` (All contracts). Default is `ALL` (Optional)
     ///
     /// Official Documentation: https://developer.tdameritrade.com/option-chains/apis/get/marketdata/chains
-    pub fn get_option_chain(
-        &mut self,
-        option_params: &OptionChain,
-    ) -> Result<String, TDAClientError> {
+    pub fn get_option_chain(&self, option_params: &OptionChain) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -375,12 +389,14 @@ impl SyncTDAClient {
     /// - acct_id: Account number
     ///
     /// Official Documentation: https://developer.tdameritrade.com/user-principal/apis/get/accounts/%7BaccountId%7D/preferences-0
-    pub fn get_preferences(&mut self, acct_id: i64) -> Result<String, TDAClientError> {
+    pub fn get_preferences(&self, acct_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -400,15 +416,17 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/user-principal/apis/put/accounts/%7BaccountId%7D/preferences-0
     pub fn update_preferences(
-        &mut self,
+        &self,
         acct_id: i64,
         preference_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Convert Preference Spec To String
         let body: String = preference_spec.into();
@@ -437,14 +455,16 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/price-history/apis/get/marketdata/%7Bsymbol%7D/pricehistory
     pub fn get_price_history(
-        &mut self,
+        &self,
         history_params: &PriceHistory,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -489,12 +509,14 @@ impl SyncTDAClient {
     /// - symbol: Enter one symbol (case-sensitive)
     ///
     /// Official Documentation: https://developer.tdameritrade.com/quotes/apis/get/marketdata/%7Bsymbol%7D/quotes
-    pub fn get_quote(&mut self, symbol: &str) -> Result<String, TDAClientError> {
+    pub fn get_quote(&self, symbol: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -512,12 +534,14 @@ impl SyncTDAClient {
     /// - symbols: Enter one or more symbols in a vector (case-sensitive)
     ///
     /// Official Documentation: https://developer.tdameritrade.com/quotes/apis/get/marketdata/quotes
-    pub fn get_quotes(&mut self, symbols: &Vec<&str>) -> Result<String, TDAClientError> {
+    pub fn get_quotes(&self, symbols: &Vec<&str>) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -544,12 +568,14 @@ impl SyncTDAClient {
     /// - order_id: Order number
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts/%7BaccountId%7D/orders/%7BorderId%7D-0
-    pub fn get_order(&mut self, acct_id: i64, order_id: i64) -> Result<String, TDAClientError> {
+    pub fn get_order(&self, acct_id: i64, order_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -572,7 +598,7 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts/%7BaccountId%7D/orders-0
     pub fn get_orders_by_path(
-        &mut self,
+        &self,
         acct_id: i64,
         max_results: i64,
         from_entered_time: &str,
@@ -580,10 +606,12 @@ impl SyncTDAClient {
         status: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -612,7 +640,7 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/orders-0
     pub fn get_orders_by_query(
-        &mut self,
+        &self,
         acct_id: Option<i64>,
         max_results: i64,
         from_entered_time: &str,
@@ -620,10 +648,12 @@ impl SyncTDAClient {
         status: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -655,12 +685,14 @@ impl SyncTDAClient {
     /// Order Examples: https://developer.tdameritrade.com/content/place-order-samples
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/post/accounts/%7BaccountId%7D/orders-0
-    pub fn place_order(&mut self, acct_id: i64, order_spec: &str) -> Result<(), TDAClientError> {
+    pub fn place_order(&self, acct_id: i64, order_spec: &str) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Convert Order Spec To String
         let body: String = order_spec.into();
@@ -683,16 +715,18 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/put/accounts/%7BaccountId%7D/orders/%7BorderId%7D-0
     pub fn replace_order(
-        &mut self,
+        &self,
         acct_id: i64,
         order_id: i64,
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Convert Order Spec To String
         let body: String = order_spec.into();
@@ -711,12 +745,14 @@ impl SyncTDAClient {
     /// - order_id: Order number
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/delete/accounts/%7BaccountId%7D/orders/%7BorderId%7D-0
-    pub fn cancel_order(&mut self, acct_id: i64, order_id: i64) -> Result<(), TDAClientError> {
+    pub fn cancel_order(&self, acct_id: i64, order_id: i64) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Format URL
         let url: String = format!("accounts/{}/orders/{}", acct_id, order_id);
@@ -732,16 +768,14 @@ impl SyncTDAClient {
     /// - order_id: Saved order number
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts/%7BaccountId%7D/savedorders/%7BsavedOrderId%7D-0
-    pub fn get_saved_order(
-        &mut self,
-        acct_id: i64,
-        order_id: i64,
-    ) -> Result<String, TDAClientError> {
+    pub fn get_saved_order(&self, acct_id: i64, order_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -759,12 +793,14 @@ impl SyncTDAClient {
     /// - acct_id: Account number
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/get/accounts/%7BaccountId%7D/savedorders-0
-    pub fn get_saved_orders_by_path(&mut self, acct_id: i64) -> Result<String, TDAClientError> {
+    pub fn get_saved_orders_by_path(&self, acct_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -785,16 +821,14 @@ impl SyncTDAClient {
     /// Order Examples: https://developer.tdameritrade.com/content/place-order-samples
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/post/accounts/%7BaccountId%7D/savedorders-0
-    pub fn create_saved_order(
-        &mut self,
-        acct_id: i64,
-        order_spec: &str,
-    ) -> Result<(), TDAClientError> {
+    pub fn create_saved_order(&self, acct_id: i64, order_spec: &str) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Convert Order Spec To String
         let body: String = order_spec.into();
@@ -817,16 +851,18 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/put/accounts/%7BaccountId%7D/savedorders/%7BsavedOrderId%7D-0
     pub fn replace_saved_order(
-        &mut self,
+        &self,
         acct_id: i64,
         order_id: i64,
         order_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Convert Order Spec To String
         let body: String = order_spec.into();
@@ -845,16 +881,14 @@ impl SyncTDAClient {
     /// - order_id: Order number
     ///
     /// Official Documentation: https://developer.tdameritrade.com/account-access/apis/delete/accounts/%7BaccountId%7D/savedorders/%7BsavedOrderId%7D-0
-    pub fn delete_saved_order(
-        &mut self,
-        acct_id: i64,
-        order_id: i64,
-    ) -> Result<(), TDAClientError> {
+    pub fn delete_saved_order(&self, acct_id: i64, order_id: i64) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Format URL
         let url: String = format!("accounts/{}/savedorders/{}", acct_id, order_id);
@@ -873,15 +907,17 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/transaction-history/apis/get/accounts/%7BaccountId%7D/transactions/%7BtransactionId%7D-0
     pub fn get_transaction(
-        &mut self,
+        &self,
         acct_id: i64,
         transaction_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -904,7 +940,7 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/transaction-history/apis/get/accounts/%7BaccountId%7D/transactions-0
     pub fn get_transactions(
-        &mut self,
+        &self,
         acct_id: i64,
         transaction_type: &str,
         symbol: Option<&str>,
@@ -912,10 +948,12 @@ impl SyncTDAClient {
         end_date: &str,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -946,14 +984,16 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/user-principal/apis/get/userprincipals/streamersubscriptionkeys-0
     pub fn get_streamer_subscription_keys(
-        &mut self,
+        &self,
         acct_ids: &Vec<i64>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -978,14 +1018,16 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/user-principal/apis/get/userprincipals-0
     pub fn get_user_principals(
-        &mut self,
+        &self,
         fields: Option<&Vec<&str>>,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -1014,16 +1056,14 @@ impl SyncTDAClient {
     /// - watchlist_id: Watchlist number
     ///
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/get/accounts/%7BaccountId%7D/watchlists/%7BwatchlistId%7D-0
-    pub fn get_watchlist(
-        &mut self,
-        acct_id: i64,
-        watchlist_id: i64,
-    ) -> Result<String, TDAClientError> {
+    pub fn get_watchlist(&self, acct_id: i64, watchlist_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -1042,14 +1082,16 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/get/accounts/%7BaccountId%7D/watchlists-0
     pub fn get_watchlists_for_single_account(
-        &mut self,
+        &self,
         acct_id: i64,
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -1064,12 +1106,14 @@ impl SyncTDAClient {
     /// All watchlists for all of the user's linked accounts
     ///
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/get/accounts/watchlists-0
-    pub fn get_watchlists_for_multiple_accounts(&mut self) -> Result<String, TDAClientError> {
+    pub fn get_watchlists_for_multiple_accounts(&self) -> Result<String, TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -1089,15 +1133,17 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/post/accounts/%7BaccountId%7D/watchlists-0
     pub fn create_watchlist(
-        &mut self,
+        &self,
         acct_id: i64,
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Convert Watchlist Spec To String
         let body: String = watchlist_spec.into();
@@ -1118,16 +1164,18 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/put/accounts/%7BaccountId%7D/watchlists/%7BwatchlistId%7D-0
     pub fn replace_watchlist(
-        &mut self,
+        &self,
         acct_id: i64,
         watchlist_id: i64,
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Convert Watchlist Spec To String
         let body: String = watchlist_spec.into();
@@ -1148,16 +1196,18 @@ impl SyncTDAClient {
     ///
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/patch/accounts/%7BaccountId%7D/watchlists/%7BwatchlistId%7D-0
     pub fn update_watchlist(
-        &mut self,
+        &self,
         acct_id: i64,
         watchlist_id: i64,
         watchlist_spec: &str,
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Convert Watchlist Spec To String
         let body: String = watchlist_spec.into();
@@ -1176,16 +1226,14 @@ impl SyncTDAClient {
     /// - watchlist_id: Watchlist number
     ///
     /// Official Documentation: https://developer.tdameritrade.com/watchlist/apis/delete/accounts/%7BaccountId%7D/watchlists/%7BwatchlistId%7D-0
-    pub fn delete_watchlist(
-        &mut self,
-        acct_id: i64,
-        watchlist_id: i64,
-    ) -> Result<(), TDAClientError> {
+    pub fn delete_watchlist(&self, acct_id: i64, watchlist_id: i64) -> Result<(), TDAClientError> {
         // Check Token Validity
-        self.auth.check_token_validity()?;
+        {
+            self.auth.write().unwrap().check_token_validity()?;
+        }
 
         // Get Access Token
-        let access_token: String = self.auth.get_access_token();
+        let access_token: String = self.auth.read().unwrap().get_access_token();
 
         // Format URL
         let url: String = format!("accounts/{}/watchlists/{}", acct_id, watchlist_id);

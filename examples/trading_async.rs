@@ -6,7 +6,7 @@ mod config;
 #[tokio::main]
 async fn main() -> Result<(), TDAClientError> {
     // Create Asynchronous TDAClient
-    let mut client = AsyncTDAClient::new(
+    let client = AsyncTDAClient::new(
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
@@ -55,11 +55,11 @@ async fn main() -> Result<(), TDAClientError> {
     }
 
     // Place Order
-    place_order(&mut client, acct_id).await?; // Limit Order For 1 Share Of AAPL At $1000
+    place_order(&client, acct_id).await?; // Limit Order For 1 Share Of AAPL At $1000
 
     // Replace Order
     let replace_order_id = 0;
-    replace_order(&mut client, acct_id, replace_order_id).await?; // Replace Existing Order For 1 Share Of AAPL At $1000
+    replace_order(&client, acct_id, replace_order_id).await?; // Replace Existing Order For 1 Share Of AAPL At $1000
 
     // Cancel Order
     let cancel_order_id = 0;
@@ -85,11 +85,11 @@ async fn main() -> Result<(), TDAClientError> {
     }
 
     // Create Saved Order
-    create_saved_order(&mut client, acct_id).await?; // Create Saved Limit Order For 1 Share Of AAPL At $1000
+    create_saved_order(&client, acct_id).await?; // Create Saved Limit Order For 1 Share Of AAPL At $1000
 
     // Replace Saved Order
     let replace_order_id = 0;
-    replace_saved_order(&mut client, acct_id, replace_order_id).await?; // Replace Existing Saved Order For 1 Share Of AAPL At $1000
+    replace_saved_order(&client, acct_id, replace_order_id).await?; // Replace Existing Saved Order For 1 Share Of AAPL At $1000
 
     // Delete Saved Order
     let delete_order_id = 0;
@@ -98,7 +98,7 @@ async fn main() -> Result<(), TDAClientError> {
     Ok(())
 }
 
-async fn place_order(client: &mut AsyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
+async fn place_order(client: &AsyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
     let order_spec = equity_buy_limit("AAPL", 1.0, 1000.0).build()?;
 
     /*
@@ -126,7 +126,7 @@ async fn place_order(client: &mut AsyncTDAClient, acct_id: i64) -> Result<(), TD
 }
 
 async fn replace_order(
-    client: &mut AsyncTDAClient,
+    client: &AsyncTDAClient,
     acct_id: i64,
     order_id: i64,
 ) -> Result<(), TDAClientError> {
@@ -151,10 +151,7 @@ async fn replace_order(
     client.replace_order(acct_id, order_id, order_spec).await
 }
 
-async fn create_saved_order(
-    client: &mut AsyncTDAClient,
-    acct_id: i64,
-) -> Result<(), TDAClientError> {
+async fn create_saved_order(client: &AsyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
     let order_spec = r#"{
         "orderType": "LIMIT",
         "session": "SEAMLESS",
@@ -177,7 +174,7 @@ async fn create_saved_order(
 }
 
 async fn replace_saved_order(
-    client: &mut AsyncTDAClient,
+    client: &AsyncTDAClient,
     acct_id: i64,
     order_id: i64,
 ) -> Result<(), TDAClientError> {

@@ -4,7 +4,7 @@ mod config;
 #[tokio::main]
 async fn main() -> Result<(), TDAClientError> {
     // Create Asynchronous TDAClient
-    let mut client = AsyncTDAClient::new(
+    let client = AsyncTDAClient::new(
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),

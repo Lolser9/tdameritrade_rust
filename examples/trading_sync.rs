@@ -5,7 +5,7 @@ mod config;
 
 fn main() -> Result<(), TDAClientError> {
     // Create Synchronous TDAClient
-    let mut client = SyncTDAClient::new(
+    let client = SyncTDAClient::new(
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
@@ -50,11 +50,11 @@ fn main() -> Result<(), TDAClientError> {
     }
 
     // Place Order
-    place_order(&mut client, acct_id)?; // Limit Order For 1 Share Of AAPL At $1000
+    place_order(&client, acct_id)?; // Limit Order For 1 Share Of AAPL At $1000
 
     // Replace Order
     let replace_order_id = 0;
-    replace_order(&mut client, acct_id, replace_order_id)?; // Replace Existing Order For 1 Share Of AAPL At $1000
+    replace_order(&client, acct_id, replace_order_id)?; // Replace Existing Order For 1 Share Of AAPL At $1000
 
     // Cancel Order
     let cancel_order_id = 0;
@@ -80,11 +80,11 @@ fn main() -> Result<(), TDAClientError> {
     }
 
     // Create Saved Order
-    create_saved_order(&mut client, acct_id)?; // Create Saved Limit Order For 1 Share Of AAPL At $1000
+    create_saved_order(&client, acct_id)?; // Create Saved Limit Order For 1 Share Of AAPL At $1000
 
     // Replace Saved Order
     let replace_order_id = 0;
-    replace_saved_order(&mut client, acct_id, replace_order_id)?; // Replace Existing Saved Order For 1 Share Of AAPL At $1000
+    replace_saved_order(&client, acct_id, replace_order_id)?; // Replace Existing Saved Order For 1 Share Of AAPL At $1000
 
     // Delete Saved Order
     let delete_order_id = 0;
@@ -93,7 +93,7 @@ fn main() -> Result<(), TDAClientError> {
     Ok(())
 }
 
-fn place_order(client: &mut SyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
+fn place_order(client: &SyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
     let order_spec = equity_buy_limit("AAPL", 1.0, 1000.0).build()?;
 
     /*
@@ -123,7 +123,7 @@ fn place_order(client: &mut SyncTDAClient, acct_id: i64) -> Result<(), TDAClient
 }
 
 fn replace_order(
-    client: &mut SyncTDAClient,
+    client: &SyncTDAClient,
     acct_id: i64,
     order_id: i64,
 ) -> Result<(), TDAClientError> {
@@ -150,7 +150,7 @@ fn replace_order(
     Ok(())
 }
 
-fn create_saved_order(client: &mut SyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
+fn create_saved_order(client: &SyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
     let order_spec = r#"{
         "orderType": "LIMIT",
         "session": "SEAMLESS",
@@ -175,7 +175,7 @@ fn create_saved_order(client: &mut SyncTDAClient, acct_id: i64) -> Result<(), TD
 }
 
 fn replace_saved_order(
-    client: &mut SyncTDAClient,
+    client: &SyncTDAClient,
     acct_id: i64,
     order_id: i64,
 ) -> Result<(), TDAClientError> {

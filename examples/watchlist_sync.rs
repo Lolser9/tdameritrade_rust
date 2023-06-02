@@ -3,7 +3,7 @@ mod config;
 
 fn main() -> Result<(), TDAClientError> {
     // Create Synchronous TDAClient
-    let mut client = SyncTDAClient::new(
+    let client = SyncTDAClient::new(
         config::client_id(),
         config::redirect_uri(),
         config::token_path(),
@@ -35,15 +35,15 @@ fn main() -> Result<(), TDAClientError> {
     println!("{}", res_json.watchlist_id);
 
     // Create Watchlist
-    create_watchlist(&mut client, acct_id)?; // Creates Watchlist With Symbols AAPL and AMZN
+    create_watchlist(&client, acct_id)?; // Creates Watchlist With Symbols AAPL and AMZN
 
     // Replace Watchlist
     let replace_watchlist_id = 0;
-    replace_watchlist(&mut client, acct_id, replace_watchlist_id)?; // Replaces Watchlist With Symbols AMD and NVDA
+    replace_watchlist(&client, acct_id, replace_watchlist_id)?; // Replaces Watchlist With Symbols AMD and NVDA
 
     // Update Watchlist
     let update_watchlist_id = 0;
-    update_watchlist(&mut client, acct_id, update_watchlist_id)?; // Adds Symbols AAPL and AMZN on existing watchlist
+    update_watchlist(&client, acct_id, update_watchlist_id)?; // Adds Symbols AAPL and AMZN on existing watchlist
 
     // Delete Watchlist
     let delete_watchlist_id = 0;
@@ -52,7 +52,7 @@ fn main() -> Result<(), TDAClientError> {
     Ok(())
 }
 
-fn create_watchlist(client: &mut SyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
+fn create_watchlist(client: &SyncTDAClient, acct_id: i64) -> Result<(), TDAClientError> {
     // Create Watchlist Spec
     let create_spec = r#"{
         "name": "Created Watchlist",
@@ -86,7 +86,7 @@ fn create_watchlist(client: &mut SyncTDAClient, acct_id: i64) -> Result<(), TDAC
 }
 
 fn replace_watchlist(
-    client: &mut SyncTDAClient,
+    client: &SyncTDAClient,
     acct_id: i64,
     watchlist_id: i64,
 ) -> Result<(), TDAClientError> {
@@ -126,7 +126,7 @@ fn replace_watchlist(
 }
 
 fn update_watchlist(
-    client: &mut SyncTDAClient,
+    client: &SyncTDAClient,
     acct_id: i64,
     watchlist_id: i64,
 ) -> Result<(), TDAClientError> {

@@ -36,7 +36,8 @@ pub struct Position {
     pub instrument: Instrument,
     pub market_value: f64,
     pub maintenance_requirement: f64,
-    pub previous_session_long_quantity: f64,
+    pub previous_session_long_quantity: Option<f64>,
+    pub previous_sessions_short_quantity: Option<f64>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -53,7 +54,7 @@ pub struct OrderStrategy {
     pub destination_link_name: String,
     pub price: Option<f64>,
     pub order_leg_collection: Vec<OrderLegCollection>,
-    pub order_strategy_type: String,
+    pub order_strategy_type: Option<String>,
     pub order_id: i64,
     pub cancelable: bool,
     pub editable: bool,
