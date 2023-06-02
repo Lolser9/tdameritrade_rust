@@ -2,6 +2,9 @@
 
 An unofficial rust library for [TD Ameritrade's API](https://developer.tdameritrade.com/apis)
 
+## New in version 0.1.4.1
+- Added interior mutability
+
 ## New in version 0.1.4
 - Created OrderBuilder to construct orders for TD Ameritrade easier. 
 - Created equity order templates with OrderBuilder
@@ -22,7 +25,7 @@ Add this to your Cargo.toml
 
 ```toml
 [dependencies]
-tdameritrade_rust = "0.1.4"
+tdameritrade_rust = "0.1.4.1"
 ```
 
 ## Getting Started
@@ -54,13 +57,14 @@ use tdameritrade_rust::{
     output::quotes::{QuoteType, Quotes},
     SyncTDAClient, TDAClientError,
 };
+mod config;
 
 fn main() -> Result<(), TDAClientError> {
     // Create Synchronous TDAClient
-    let mut client = SyncTDAClient::new(
-        "client_id@AMER.OAUTHAP".into(), // Client Id (Consumer Key)
-        "redirect_uri".into(), // Redirect URI (Callback URL)
-        "token_file_path".into(), // Token File Location
+    let client = SyncTDAClient::new(
+        config::client_id(),
+        config::redirect_uri(),
+        config::token_path(),
     )?;
 
     // Get Quote
@@ -94,14 +98,15 @@ use tdameritrade_rust::{
     output::quotes::{QuoteType, Quotes},
     AsyncTDAClient, TDAClientError,
 };
+mod config;
 
 #[tokio::main]
 async fn main() -> Result<(), TDAClientError> {
     // Create Asynchronous TDAClient
-    let mut client = AsyncTDAClient::new(
-        "client_id@AMER.OAUTHAP".into(), // Client Id (Consumer Key)
-        "redirect_uri".into(), // Redirect URI (Callback URL)
-        "token_file_path".into(), // Token File Location
+    let client = AsyncTDAClient::new(
+        config::client_id(),
+        config::redirect_uri(),
+        config::token_path(),
     )?;
 
     // Get Quote
