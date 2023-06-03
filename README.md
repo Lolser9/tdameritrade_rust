@@ -2,6 +2,9 @@
 
 An unofficial rust library for [TD Ameritrade's API](https://developer.tdameritrade.com/apis)
 
+## New in version 0.1.6
+- Implemented cloning for SyncTDAClient and AsyncTDAClient
+
 ## New in version 0.1.5
 - Added interior mutability
 
@@ -25,7 +28,7 @@ Add this to your Cargo.toml
 
 ```toml
 [dependencies]
-tdameritrade_rust = "0.1.5"
+tdameritrade_rust = "0.1.6"
 ```
 
 ## Getting Started
