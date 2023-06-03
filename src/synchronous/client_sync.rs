@@ -31,6 +31,17 @@ impl SyncTDAClient {
         })
     }
 
+    pub fn clone(&self) -> Self {
+        // Create a new `SyncTDAClient` instance with the same values as the current instance.
+        let clone = Self {
+            reqwest_client: self.reqwest_client.clone(),
+            auth: RwLock::new(self.auth.read().unwrap().clone()),
+        };
+
+        // Return the cloned `SyncTDAClient` instance.
+        clone
+    }
+
     //// Accounts ////
 
     /// Account balances, positions, and orders for a specific account

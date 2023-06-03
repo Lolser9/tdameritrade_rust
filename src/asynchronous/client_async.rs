@@ -4,7 +4,7 @@ use crate::error::TDAClientError;
 use itertools::Itertools;
 use reqwest::Client;
 use std::collections::HashMap;
-use std::sync::RwLock;
+use tokio::sync::RwLock;
 
 pub struct AsyncTDAClient {
     reqwest_client: Client,
@@ -31,6 +31,18 @@ impl AsyncTDAClient {
         })
     }
 
+    /// Clones AsyncTDAClient
+    pub async fn clone(&self) -> Self {
+        // Create a new `AsyncTDAClient` instance with the same values as the current instance.
+        let clone = Self {
+            reqwest_client: self.reqwest_client.clone(),
+            auth: RwLock::new(self.auth.read().await.clone()),
+        };
+
+        // Return the cloned `AsyncTDAClient` instance.
+        clone
+    }
+
     //// Accounts ////
 
     /// Account balances, positions, and orders for a specific account
@@ -47,11 +59,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -80,11 +92,11 @@ impl AsyncTDAClient {
     pub async fn get_accounts(&self, fields: Option<&Vec<&str>>) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -125,11 +137,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -154,11 +166,11 @@ impl AsyncTDAClient {
     pub async fn get_instrument(&self, cusip: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -186,11 +198,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -223,11 +235,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -260,11 +272,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -310,11 +322,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -395,11 +407,11 @@ impl AsyncTDAClient {
     pub async fn get_preferences(&self, acct_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -425,11 +437,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Convert Preference Spec To String
         let body: String = preference_spec.into();
@@ -463,11 +475,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -515,11 +527,11 @@ impl AsyncTDAClient {
     pub async fn get_quote(&self, symbol: &str) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -540,11 +552,11 @@ impl AsyncTDAClient {
     pub async fn get_quotes(&self, symbols: &Vec<&str>) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -574,11 +586,11 @@ impl AsyncTDAClient {
     pub async fn get_order(&self, acct_id: i64, order_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -610,11 +622,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -652,11 +664,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -691,11 +703,11 @@ impl AsyncTDAClient {
     pub async fn place_order(&self, acct_id: i64, order_spec: &str) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Convert Order Spec To String
         let body: String = order_spec.into();
@@ -725,11 +737,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Convert Order Spec To String
         let body: String = order_spec.into();
@@ -751,11 +763,11 @@ impl AsyncTDAClient {
     pub async fn cancel_order(&self, acct_id: i64, order_id: i64) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Format URL
         let url: String = format!("accounts/{}/orders/{}", acct_id, order_id);
@@ -778,11 +790,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -803,11 +815,11 @@ impl AsyncTDAClient {
     pub async fn get_saved_orders_by_path(&self, acct_id: i64) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -835,11 +847,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Convert Order Spec To String
         let body: String = order_spec.into();
@@ -869,11 +881,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Convert Order Spec To String
         let body: String = order_spec.into();
@@ -899,11 +911,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Format URL
         let url: String = format!("accounts/{}/savedorders/{}", acct_id, order_id);
@@ -928,11 +940,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -964,11 +976,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -1004,11 +1016,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -1038,11 +1050,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let mut params: HashMap<String, String> = HashMap::new();
@@ -1078,11 +1090,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -1106,11 +1118,11 @@ impl AsyncTDAClient {
     ) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -1128,11 +1140,11 @@ impl AsyncTDAClient {
     pub async fn get_watchlists_for_multiple_accounts(&self) -> Result<String, TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Create HashMap To Store Parameters
         let params: HashMap<String, String> = HashMap::new();
@@ -1158,11 +1170,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Convert Watchlist Spec To String
         let body: String = watchlist_spec.into();
@@ -1190,11 +1202,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Convert Watchlist Spec To String
         let body: String = watchlist_spec.into();
@@ -1222,11 +1234,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Convert Watchlist Spec To String
         let body: String = watchlist_spec.into();
@@ -1252,11 +1264,11 @@ impl AsyncTDAClient {
     ) -> Result<(), TDAClientError> {
         // Check Token Validity
         {
-            self.auth.write().unwrap().check_token_validity().await?;
+            self.auth.write().await.check_token_validity().await?;
         }
 
         // Get Access Token
-        let access_token: String = self.auth.read().unwrap().get_access_token();
+        let access_token: String = self.auth.read().await.get_access_token();
 
         // Format URL
         let url: String = format!("accounts/{}/watchlists/{}", acct_id, watchlist_id);
